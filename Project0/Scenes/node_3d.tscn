@@ -1,0 +1,61 @@
+[gd_scene load_steps=6 format=3 uid="uid://x0eums7o0e8r"]
+
+[ext_resource type="PackedScene" uid="uid://b06pkarqs3sti" path="res://Scenes/Platform.tscn" id="1_46r0p"]
+[ext_resource type="PackedScene" uid="uid://c50o1mfvkdhnn" path="res://Scenes/Character.tscn" id="2_7mokx"]
+
+[sub_resource type="Sky" id="Sky_7qg30"]
+
+[sub_resource type="Environment" id="Environment_5ica5"]
+background_mode = 1
+background_color = Color(0.486275, 0.839216, 1, 1)
+background_energy_multiplier = 1.07
+sky = SubResource("Sky_7qg30")
+sky_custom_fov = 114.5
+reflected_light_source = 2
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_grol0"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="RigidBody3D" parent="." instance=ExtResource("1_46r0p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.53, 0)
+
+[node name="RigidBody3D2" parent="." instance=ExtResource("1_46r0p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.166716, 6.19732)
+
+[node name="RigidBody3D3" parent="." instance=ExtResource("1_46r0p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.87211, 13.4447)
+
+[node name="RigidBody3D4" parent="." instance=ExtResource("1_46r0p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.53, 19.7905)
+
+[node name="CharacterPlacholder" parent="." instance=ExtResource("2_7mokx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0598769, 0)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CharacterPlacholder"]
+transform = Transform3D(0.00240858, 0, -0.999997, 0, 1, 0, 0.999997, 0, 0.00240858, -3.81214, 0.718519, 0)
+spring_length = 5.0
+margin = 0.2
+
+[node name="Camera3D" type="Camera3D" parent="CharacterPlacholder/SpringArm3D"]
+transform = Transform3D(1, -7.27596e-11, 0, 7.27596e-11, 1, -6.94485e-09, 0, 6.94485e-09, 1, -9.31323e-10, 0.479013, -1.03786)
+environment = SubResource("Environment_5ica5")
+fov = 67.6
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.999828, 0, 0.0185518, -0.0180526, 0.230406, 0.972927, -0.00427444, -0.973095, 0.230366, 0, 0, 0)
+light_color = Color(0.792157, 0.611765, 0.305882, 1)
+light_energy = 16.0
+shadow_enabled = true
+
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.87913, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("WorldBoundaryShape3D_grol0")
+
+[node name="Timer" type="Timer" parent="Area3D"]
+wait_time = 0.3
+
+[connection signal="body_entered" from="Area3D" to="CharacterPlacholder" method="_on_area_3d_body_entered"]
+[connection signal="timeout" from="Area3D/Timer" to="CharacterPlacholder" method="_on_timer_timeout"]
