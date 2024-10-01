@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://6binp53mfrbr"]
+
+[ext_resource type="PackedScene" uid="uid://b06pkarqs3sti" path="res://Scenes/Platform.tscn" id="1_vwby8"]
+
+[sub_resource type="PrismMesh" id="PrismMesh_o63v2"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bpe4w"]
+
+[node name="StaticBody3D" type="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 43.0719)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.193234, 0, -5.71657, 1.16316, 5.60018, -0.0393175, 5.59698, -1.16382, -0.189192, 0, -0.813386, 0.51371)
+mesh = SubResource("PrismMesh_o63v2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(5.77676, 0.00282948, 0.00382003, 0.00728167, -1.23574, -6.39847, 0.00477365, -1.53907, 5.13742, -0.0165528, -1.7314, 1.7659)
+shape = SubResource("BoxShape3D_bpe4w")
+
+[node name="RigidBody3D" parent="." instance=ExtResource("1_vwby8")]
+transform = Transform3D(1, 0, 0, 0, 0.936385, -0.350976, 0, 0.350976, 0.936385, 0, -2.52835, 1.82103)
+
+[node name="RigidBody3D2" parent="." instance=ExtResource("1_vwby8")]
+transform = Transform3D(1, 0, 0, 0, 0.964893, 0.262644, 0, -0.262644, 0.964893, 0, -3.85219, 2.76567)
+
+[node name="RigidBody3D3" parent="." instance=ExtResource("1_vwby8")]
+transform = Transform3D(1, 0, 0, 0, 0.728491, 0.685056, 0, -0.685056, 0.728491, 0, -4.24728, 4.09912)
