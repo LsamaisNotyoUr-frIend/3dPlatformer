@@ -1,21 +1,30 @@
-[gd_scene load_steps=6 format=3 uid="uid://x0eums7o0e8r"]
+[gd_scene load_steps=8 format=3 uid="uid://x0eums7o0e8r"]
 
 [ext_resource type="PackedScene" uid="uid://b06pkarqs3sti" path="res://Scenes/Platform.tscn" id="1_46r0p"]
 [ext_resource type="PackedScene" uid="uid://c50o1mfvkdhnn" path="res://Scenes/Character.tscn" id="2_7mokx"]
+[ext_resource type="PackedScene" uid="uid://6binp53mfrbr" path="res://Scenes/Slope.tscn" id="3_fqme0"]
 
-[sub_resource type="Sky" id="Sky_7qg30"]
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_a06jc"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
 
-[sub_resource type="Environment" id="Environment_5ica5"]
-background_mode = 1
-background_color = Color(0.486275, 0.839216, 1, 1)
-background_energy_multiplier = 1.07
-sky = SubResource("Sky_7qg30")
-sky_custom_fov = 114.5
+[sub_resource type="Sky" id="Sky_u8ywl"]
+sky_material = SubResource("ProceduralSkyMaterial_a06jc")
+
+[sub_resource type="Environment" id="Environment_6ikg8"]
+background_mode = 2
+background_energy_multiplier = 1.48
+sky = SubResource("Sky_u8ywl")
 reflected_light_source = 2
+tonemap_mode = 2
+glow_enabled = true
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_grol0"]
 
 [node name="Node3D" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_6ikg8")
 
 [node name="RigidBody3D" parent="." instance=ExtResource("1_46r0p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.53, 0)
@@ -27,7 +36,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.166716, 6.19732)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.87211, 13.4447)
 
 [node name="RigidBody3D4" parent="." instance=ExtResource("1_46r0p")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.53, 19.7905)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 4.13551, 0, -1.7284, 26.8843)
+
+[node name="RigidBody3D5" parent="." instance=ExtResource("1_46r0p")]
+transform = Transform3D(1, 0, 0, 0, 0.984022, 0.736314, 0, -0.178047, 4.06943, 0, -0.430135, 31.578)
+
+[node name="RigidBody3D6" parent="." instance=ExtResource("1_46r0p")]
+transform = Transform3D(1, 0, 0, 0, 1.16825, 0.00672159, 0, -0.027817, 0.282292, 0, 1.33199, 42.2452)
 
 [node name="CharacterPlacholder" parent="." instance=ExtResource("2_7mokx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0598769, 0)
@@ -39,7 +54,6 @@ margin = 0.2
 
 [node name="Camera3D" type="Camera3D" parent="CharacterPlacholder/SpringArm3D"]
 transform = Transform3D(1, -7.27596e-11, 0, 7.27596e-11, 1, -6.94485e-09, 0, 6.94485e-09, 1, -9.31323e-10, 0.479013, -1.03786)
-environment = SubResource("Environment_5ica5")
 fov = 67.6
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
@@ -49,13 +63,15 @@ light_energy = 16.0
 shadow_enabled = true
 
 [node name="Area3D" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.87913, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.52693, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("WorldBoundaryShape3D_grol0")
 
 [node name="Timer" type="Timer" parent="Area3D"]
 wait_time = 0.3
+
+[node name="StaticBody3D" parent="." instance=ExtResource("3_fqme0")]
 
 [connection signal="body_entered" from="Area3D" to="CharacterPlacholder" method="_on_area_3d_body_entered"]
 [connection signal="timeout" from="Area3D/Timer" to="CharacterPlacholder" method="_on_timer_timeout"]
