@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://x0eums7o0e8r"]
+[gd_scene load_steps=7 format=3 uid="uid://x0eums7o0e8r"]
 
 [ext_resource type="PackedScene" uid="uid://b06pkarqs3sti" path="res://Scenes/Platform.tscn" id="1_46r0p"]
 [ext_resource type="PackedScene" uid="uid://c50o1mfvkdhnn" path="res://Scenes/Character.tscn" id="2_7mokx"]
+[ext_resource type="PackedScene" uid="uid://d2l5mrf65ecqx" path="res://Scenes/Slope_platform_2.tscn" id="3_sdiue"]
 
 [sub_resource type="Sky" id="Sky_7qg30"]
 
@@ -28,6 +29,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.87211, 13.4447)
 
 [node name="RigidBody3D4" parent="." instance=ExtResource("1_46r0p")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.53, 19.7905)
+
+[node name="RigidBody3D6" parent="." instance=ExtResource("1_46r0p")]
+transform = Transform3D(1, 0, 0, 0, 1.14031, 1.5616, 0, -0.287315, 6.19778, 0, 3.37273, 37.7148)
 
 [node name="CharacterPlacholder" parent="." instance=ExtResource("2_7mokx")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0598769, 0)
@@ -56,6 +60,9 @@ shape = SubResource("WorldBoundaryShape3D_grol0")
 
 [node name="Timer" type="Timer" parent="Area3D"]
 wait_time = 0.3
+
+[node name="Body1" parent="." instance=ExtResource("3_sdiue")]
+transform = Transform3D(-8.74228e-08, 0, -2, 0, 2, 0, 2, 0, -8.74228e-08, -3, -2.1999, 53.145)
 
 [connection signal="body_entered" from="Area3D" to="CharacterPlacholder" method="_on_area_3d_body_entered"]
 [connection signal="timeout" from="Area3D/Timer" to="CharacterPlacholder" method="_on_timer_timeout"]

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bpaaeup0uc53t"]
+
+[ext_resource type="PackedScene" uid="uid://bndhrg2ga0ldh" path="res://Assets/Meshes/untitled.glb" id="1_ylrgt"]
+
+[node name="Slope1" type="StaticBody3D"]
+
+[node name="untitled" parent="." instance=ExtResource("1_ylrgt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.255585, 0, 0.0502753)

@@ -8,9 +8,9 @@ var current_anim = IDLE
 var dash_duration = 0.3
 var dash_timer = 0.0  
 var dash_cooldown = 0.0
-var dash_speed_multiplier = 0.6
+var dash_speed_multiplier = 0.8
 var speed = 80.0
-var slower_speed = 75.0
+var running_speed = 400.0
 var jumpStrength = 12.0
 var snapVector = Vector3.DOWN
 var run_value:float = 0
@@ -21,6 +21,8 @@ var reverse_dash_value:float = 0
 var walkjump_value:float = 0
 var current_speed
 var finished_run = false
+var fall_speed = 0.0
+var max_fall_speed = 100.0
 
 @onready var animation_player = $Mixamo/AnimationPlayer
 @onready var mixamo = $Mixamo
@@ -39,60 +41,77 @@ func _physics_process(delta):
 	handle_animation(delta)
 	var move_direction = Vector3.ZERO
 	current_speed = velocity.z
-	
 	move_direction.z = Input.get_action_strength("Right") - Input.get_action_strength("Left")
 	
-	if !is_on_floor() and dash_timer <= 0.1:
-		velocity.y -= gravity * delta *1.1
-		current_anim = LANDING
-		
-	if dash_cooldown >= 0.05:
-		dash_cooldown -= delta
-		
 	if is_no_action_being_pressed():
 		current_anim = IDLE
 	
-	var justLanded = is_on_floor() and snapVector == Vector3.ZERO
-	var isJumping = is_on_floor() and Input.is_action_pressed("Jump")
-	var isflying = !is_on_floor() and Input.is_action_just_pressed("Dash") and dash_cooldown <= 0.1
-	var isRunning = is_on_floor() and Input.is_action_pressed("Dash")
-	var isWalking = is_on_floor() and Input.is_action_pressed("Right") or Input.is_action_pressed("Left")
-	var notRunning = is_on_floor() and Input.is_action_just_released("Dash")
+	if is_on_floor():
+		fall_speed = move_toward(velocity.y,0, delta)
+		
+	if !is_on_floor() and dash_timer <= 0.1:
+		fall_speed += gravity * delta
+		fall_speed = clamp(fall_speed, 0, max_fall_speed)
+		velocity.y -= fall_speed/5
+		current_anim = LANDING
 	
-	if move_direction.length() > 0.2:
-		var look_direction = Vector2(velocity.z, velocity.x)
-		mixamo.rotation.y = lerp_angle(mixamo.rotation.y, look_direction.angle(), 0.35)
-			
-	if isWalking and move_direction.length() > 0.1:
-		current_speed=move_direction.z * speed * delta
+	
+	if move_direction.length() > 0.2 or move_direction.length() < -0.2:
+		var look_dir = Vector2(velocity.z, velocity.x)
+		mixamo.rotation.y = lerp_angle(mixamo.rotation.y, look_dir.angle(), 0.40)
+	
+	var isWalkingLeft = is_on_floor() and Input.is_action_pressed("Left")
+	var isWalkingRight = is_on_floor() and Input.is_action_pressed("Right")
+	
+	if isWalkingLeft:
+		current_speed =  move_direction.z * speed * delta
 		velocity.z = current_speed
 		current_anim = WALK
-	elif !isWalking:
-		velocity.z = move_toward(velocity.z, 0, delta *3)
+	elif isWalkingRight:
+		current_speed =  move_direction.z * speed * delta
+		velocity.z = current_speed
+		current_anim = WALK
+	elif !isWalkingLeft and !isWalkingRight:
+		velocity.z = move_toward(current_speed, 0, delta * 2)
 		
+	var isJumping = is_on_floor() and Input.is_action_just_pressed("Jump")
+	var justLanded = is_on_floor() and snapVector == Vector3.ZERO
 	
 	if isJumping:
 		velocity.y = jumpStrength
-		
+		current_anim = JUMP
 		snapVector = Vector3.ZERO
-		current_anim= JUMP
 	elif justLanded:
+		fall_speed = move_toward(velocity.y,0, delta)
 		snapVector = Vector3.DOWN
-		current_anim= LANDING
+		current_anim = LANDING
 		
+	var isRunningLeft = isWalkingLeft and Input.is_action_pressed("Dash")
+	var isRunningRight = isWalkingRight and Input.is_action_pressed("Dash")
 	
-	if isRunning and abs(move_direction.z) > 0.2:
-		current_speed = move_direction.z * speed * 5 * delta
+	if isRunningLeft:
+		current_speed = move_direction.z * running_speed * delta
 		velocity.z = current_speed
 		current_anim = RUN
-	elif !isRunning:
-		velocity.z = move_toward(velocity.z, 0, delta* 6)
+	if isRunningRight:
+		current_speed = move_direction.z * running_speed * delta
+		velocity.z = current_speed
+		current_anim = RUN
+	elif !isRunningLeft and !isRunningRight:
+		velocity.z = move_toward(velocity.z, 0, delta* 3)
 		
+	var is_in_air = !is_on_floor()
+	
+	var isflying = !is_on_floor() and Input.is_action_just_pressed("Dash") and dash_cooldown <= 0.1
+	
+	if dash_cooldown >= 0.05:
+		dash_cooldown -= delta
+	
 	if isflying and dash_timer <= 0.1:
 		current_anim = DASH
 		dash_timer = dash_duration
 		var dash_speed = move_direction.z * speed * dash_speed_multiplier * delta
-		velocity.z = move_toward(velocity.z, dash_speed, delta)
+		velocity.z = move_toward(velocity.z, dash_speed, delta*2)
 		print(velocity.z)
 	
 	if dash_timer > 0.1:
@@ -100,10 +119,8 @@ func _physics_process(delta):
 		var dash_speed = move_direction.z * speed * dash_speed_multiplier * delta
 		velocity.z += dash_speed
 		dash_cooldown = 1.0
-		
-		
-	move_and_slide()
 	
+	move_and_slide()
 
 	
 func mightNeed(move_direction):
